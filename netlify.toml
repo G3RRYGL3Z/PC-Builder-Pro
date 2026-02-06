@@ -1,0 +1,7 @@
+[build]
+  command = "npm run build:prod"
+  publish = "dist"
+
+[dev]
+  port = 5173
+  command = "npm run dev"

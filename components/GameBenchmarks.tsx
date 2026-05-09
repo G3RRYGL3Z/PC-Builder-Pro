@@ -40,9 +40,11 @@ interface GameBenchmarksProps {
   gamePerformances: GamePerformance[];
   applicationPerformances: ApplicationPerformance[];
   selectedCount: number;
+  onViewGameBenchmarks?: () => void;
+  onViewApplicationBenchmarks?: () => void;
 }
 
-export function GameBenchmarks({ gamePerformances, applicationPerformances, selectedCount }: GameBenchmarksProps) {
+export function GameBenchmarks({ gamePerformances, applicationPerformances, selectedCount, onViewGameBenchmarks, onViewApplicationBenchmarks }: GameBenchmarksProps) {
   const [selectedGame, setSelectedGame] = useState<string | null>(null);
   const [selectedApp, setSelectedApp] = useState<string | null>(null);
 

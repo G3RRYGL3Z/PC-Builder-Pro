@@ -13,6 +13,7 @@ interface User {
 interface AuthContextType {
   user: User | null;
   loading: boolean;
+  isSupabaseAvailable: boolean;
   signUp: (email: string, password: string, name: string) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
@@ -24,6 +25,9 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+
+  // FIX: Expose whether Supabase is configured so the UI can show "Demo Mode"
+  const isSupabaseAvailable = Boolean(projectId && projectId.length > 0);
 
   const serverUrl = `https://${projectId}.supabase.co/functions/v1/make-server-5314a707`;
 
@@ -254,6 +258,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     <AuthContext.Provider value={{
       user,
       loading,
+      isSupabaseAvailable,
       signUp,
       signIn,
       signOut,

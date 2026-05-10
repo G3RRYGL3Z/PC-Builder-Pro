@@ -8,6 +8,8 @@ import { comparePerformance } from '../utils/performanceBenchmarking';
 interface ComponentRecommendation {
   componentType: string;
   component: any;
+  title?: string;
+  description?: string;
   reason: string;
   resolvesIssues: string[];
   priceImpact: 'lower' | 'similar' | 'higher';
@@ -118,9 +120,10 @@ export function RecommendationPanel({ recommendations, selectedComponents, onSel
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-2">
-                            <h5 className="font-medium">
+                          <div className="flex items-center gap-2 mb-2">
+                            <h4 className="font-medium text-foreground">
                               {rec.component.brand} {rec.component.name}
-                            </h5>
+                            </h4>
                             <Badge 
                               className={`text-xs ${getPriorityColor(rec.priority)}`}
                               variant="outline"
@@ -129,8 +132,9 @@ export function RecommendationPanel({ recommendations, selectedComponents, onSel
                             </Badge>
                           </div>
                           
-                          <p className="text-sm text-muted-foreground mb-3">
-                            {rec.reason}
+                          <h4 className="font-medium text-foreground mb-1">{rec.title || 'Performance Optimization'}</h4>
+                          <p className="text-sm text-foreground/70 mb-2">
+                            {rec.description || rec.reason}
                           </p>
                           
                           {/* Performance Impact */}

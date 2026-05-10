@@ -20,6 +20,8 @@ interface Recommendation {
   componentType: string;
   currentComponent: any;
   suggestedComponent: any;
+  title?: string;
+  description?: string;
   reason: string;
   priority: 'high' | 'medium' | 'low';
 }
@@ -76,8 +78,10 @@ export function CompatibilityDetailsPage({ issues, status, recommendations, onBa
           <CardContent className="space-y-3">
             {errors.map((issue, i) => (
               <div key={i} className="p-3 bg-destructive/5 border border-destructive/20 rounded-lg">
-                <p className="font-medium text-sm">{issue.message}</p>
-                <p className="text-xs text-muted-foreground mt-1">{issue.description}</p>
+                <h4 className="font-medium text-foreground">{issue.message}</h4>
+                <p className="text-sm text-foreground/70">
+                  {issue.description || 'Note: review this for optimal configuration.'}
+                </p>
                 <div className="flex gap-1 mt-2">
                   {issue.affectedComponents.map(c => (
                     <Badge key={c} variant="outline" className="text-xs">{c}</Badge>
@@ -100,8 +104,10 @@ export function CompatibilityDetailsPage({ issues, status, recommendations, onBa
           <CardContent className="space-y-3">
             {warnings.map((issue, i) => (
               <div key={i} className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-                <p className="font-medium text-sm">{issue.message}</p>
-                <p className="text-xs text-muted-foreground mt-1">{issue.description}</p>
+                <h4 className="font-medium text-foreground">{issue.message}</h4>
+                <p className="text-sm text-foreground/70">
+                  {issue.description || 'Note: review this for optimal configuration.'}
+                </p>
               </div>
             ))}
           </CardContent>
@@ -116,7 +122,12 @@ export function CompatibilityDetailsPage({ issues, status, recommendations, onBa
           </CardHeader>
           <CardContent className="space-y-2">
             {infos.map((issue, i) => (
-              <p key={i} className="text-sm text-muted-foreground">{issue.message}</p>
+              <div key={i} className="p-3 bg-blue-50/50 border border-blue-100 rounded-lg">
+                <h4 className="font-medium text-foreground">{issue.message}</h4>
+                <p className="text-sm text-foreground/70">
+                  {issue.description || 'Note: review this for optimal configuration.'}
+                </p>
+              </div>
             ))}
           </CardContent>
         </Card>
@@ -139,7 +150,10 @@ export function CompatibilityDetailsPage({ issues, status, recommendations, onBa
                     {rec.priority}
                   </Badge>
                 </div>
-                <p className="text-xs text-muted-foreground">{rec.reason}</p>
+                <h4 className="font-medium text-foreground mb-1">{rec.title || 'Performance Optimization'}</h4>
+                <p className="text-sm text-foreground/70 mb-2">
+                  {rec.description || rec.reason}
+                </p>
               </div>
             ))}
           </CardContent>

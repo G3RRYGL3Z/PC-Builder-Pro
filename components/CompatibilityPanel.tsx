@@ -10,6 +10,7 @@ interface CompatibilityIssue {
   type: 'error' | 'warning' | 'info';
   component: string;
   message: string;
+  description?: string;
   affectedComponents: string[];
 }
 
@@ -144,9 +145,10 @@ export function CompatibilityPanel({
                       <div className="flex items-start gap-2">
                         {getIssueIcon(issue.type)}
                         <div className="flex-1">
-                          <AlertDescription className="mb-2">
-                            {issue.message}
-                          </AlertDescription>
+                          <h4 className="font-medium text-foreground">{issue.message}</h4>
+                          <p className="text-sm text-foreground/70 mb-2">
+                            {issue.description || 'Note: review this for optimal configuration.'}
+                          </p>
                           <div className="flex gap-1 flex-wrap">
                             {issue.affectedComponents.map((component) => (
                               <Badge 

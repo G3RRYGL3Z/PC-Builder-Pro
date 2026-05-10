@@ -38,6 +38,15 @@ export function CompatibilityDetailsPage({ issues, status, recommendations, onBa
   const warnings = issues.filter(i => i.type === 'warning');
   const infos    = issues.filter(i => i.type === 'info');
 
+  const getIssueBackground = (type: string) => {
+    switch (type) {
+      case 'error':   return 'bg-destructive/5 border-destructive/20';
+      case 'warning': return 'bg-yellow-50 dark:bg-yellow-500/10 border-yellow-200 dark:border-yellow-500/20';
+      case 'info':    return 'bg-blue-50/50 dark:bg-blue-500/10 border-blue-100 dark:border-blue-500/20';
+      default:        return 'bg-muted border-border';
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
@@ -77,7 +86,7 @@ export function CompatibilityDetailsPage({ issues, status, recommendations, onBa
           </CardHeader>
           <CardContent className="space-y-3">
             {errors.map((issue, i) => (
-              <div key={i} className="p-3 bg-destructive/5 border border-destructive/20 rounded-lg">
+              <div key={i} className={`p-4 rounded-lg border text-gray-900 dark:text-gray-100 ${getIssueBackground(issue.type)}`}>
                 <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-1">
                   {issue.message}
                 </h4>
@@ -105,7 +114,7 @@ export function CompatibilityDetailsPage({ issues, status, recommendations, onBa
           </CardHeader>
           <CardContent className="space-y-3">
             {warnings.map((issue, i) => (
-              <div key={i} className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <div key={i} className={`p-4 rounded-lg border text-gray-900 dark:text-gray-100 ${getIssueBackground(issue.type)}`}>
                 <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-1">
                   {issue.message}
                 </h4>
@@ -126,7 +135,7 @@ export function CompatibilityDetailsPage({ issues, status, recommendations, onBa
           </CardHeader>
           <CardContent className="space-y-2">
             {infos.map((issue, i) => (
-              <div key={i} className="p-3 bg-blue-50/50 border border-blue-100 rounded-lg">
+              <div key={i} className={`p-4 rounded-lg border text-gray-900 dark:text-gray-100 ${getIssueBackground(issue.type)}`}>
                 <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-1">{issue.message}</h4>
                 <p className="text-sm text-gray-700 dark:text-gray-300">
                   {issue.description || 'Note: review this for optimal configuration.'}

@@ -78,9 +78,11 @@ export function CompatibilityDetailsPage({ issues, status, recommendations, onBa
           <CardContent className="space-y-3">
             {errors.map((issue, i) => (
               <div key={i} className="p-3 bg-destructive/5 border border-destructive/20 rounded-lg">
-                <h4 className="font-medium text-foreground">{issue.message}</h4>
-                <p className="text-sm text-foreground/70">
-                  {issue.description || 'Note: review this for optimal configuration.'}
+                <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-1">
+                  {issue.message}
+                </h4>
+                <p className="text-sm text-gray-700 dark:text-gray-300">
+                  {issue.description || 'Consider addressing this for optimal performance.'}
                 </p>
                 <div className="flex gap-1 mt-2">
                   {issue.affectedComponents.map(c => (
@@ -104,9 +106,11 @@ export function CompatibilityDetailsPage({ issues, status, recommendations, onBa
           <CardContent className="space-y-3">
             {warnings.map((issue, i) => (
               <div key={i} className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-                <h4 className="font-medium text-foreground">{issue.message}</h4>
-                <p className="text-sm text-foreground/70">
-                  {issue.description || 'Note: review this for optimal configuration.'}
+                <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-1">
+                  {issue.message}
+                </h4>
+                <p className="text-sm text-gray-700 dark:text-gray-300">
+                  {issue.description || 'Consider addressing this for optimal performance.'}
                 </p>
               </div>
             ))}
@@ -123,8 +127,8 @@ export function CompatibilityDetailsPage({ issues, status, recommendations, onBa
           <CardContent className="space-y-2">
             {infos.map((issue, i) => (
               <div key={i} className="p-3 bg-blue-50/50 border border-blue-100 rounded-lg">
-                <h4 className="font-medium text-foreground">{issue.message}</h4>
-                <p className="text-sm text-foreground/70">
+                <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-1">{issue.message}</h4>
+                <p className="text-sm text-gray-700 dark:text-gray-300">
                   {issue.description || 'Note: review this for optimal configuration.'}
                 </p>
               </div>
@@ -150,8 +154,8 @@ export function CompatibilityDetailsPage({ issues, status, recommendations, onBa
                     {rec.priority}
                   </Badge>
                 </div>
-                <h4 className="font-medium text-foreground mb-1">{rec.title || 'Performance Optimization'}</h4>
-                <p className="text-sm text-foreground/70 mb-2">
+                <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-1">{rec.title || 'Performance Optimization'}</h4>
+                <p className="text-sm text-gray-700 dark:text-gray-300 mb-2">
                   {rec.description || rec.reason}
                 </p>
               </div>

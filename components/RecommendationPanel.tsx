@@ -121,7 +121,7 @@ export function RecommendationPanel({ recommendations, selectedComponents, onSel
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-2">
                           <div className="flex items-center gap-2 mb-2">
-                            <h4 className="font-medium text-foreground">
+                            <h4 className="font-medium text-gray-900 dark:text-gray-100">
                               {rec.component.brand} {rec.component.name}
                             </h4>
                             <Badge 
@@ -132,8 +132,8 @@ export function RecommendationPanel({ recommendations, selectedComponents, onSel
                             </Badge>
                           </div>
                           
-                          <h4 className="font-medium text-foreground mb-1">{rec.title || 'Performance Optimization'}</h4>
-                          <p className="text-sm text-foreground/70 mb-2">
+                          <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-1">{rec.title || 'Performance Optimization'}</h4>
+                          <p className="text-sm text-gray-700 dark:text-gray-300 mb-2">
                             {rec.description || rec.reason}
                           </p>
                           

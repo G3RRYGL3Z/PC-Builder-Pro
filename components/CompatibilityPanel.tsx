@@ -145,8 +145,8 @@ export function CompatibilityPanel({
                       <div className="flex items-start gap-2">
                         {getIssueIcon(issue.type)}
                         <div className="flex-1">
-                          <h4 className="font-medium text-foreground">{issue.message}</h4>
-                          <p className="text-sm text-foreground/70 mb-2">
+                          <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-1">{issue.message}</h4>
+                          <p className="text-sm text-gray-700 dark:text-gray-300 mb-2">
                             {issue.description || 'Note: review this for optimal configuration.'}
                           </p>
                           <div className="flex gap-1 flex-wrap">

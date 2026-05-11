@@ -1,147 +1,221 @@
-import { ArrowLeft, CheckCircle, XCircle, AlertTriangle, Wrench } from 'lucide-react';
+import { ArrowLeft, XCircle, AlertTriangle, CheckCircle, Info, Lightbulb } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { Badge } from './ui/badge';
 import { Button } from './ui/button';
-import { Separator } from './ui/separator';
-
-interface CompatibilityIssue {
-  type: 'error' | 'warning' | 'info';
-  message: string;
-  description: string;
-  affectedComponents: string[];
-}
-
-interface CompatibilityStatus {
-  status: 'compatible' | 'warning' | 'error';
-  message: string;
-}
-
-interface Recommendation {
-  componentType: string;
-  currentComponent: any;
-  suggestedComponent: any;
-  title?: string;
-  description?: string;
-  reason: string;
-  priority: 'high' | 'medium' | 'low';
-}
+import { Badge } from './ui/badge';
+import { Alert, AlertDescription } from './ui/alert';
 
 interface CompatibilityDetailsPageProps {
-  issues: CompatibilityIssue[];
-  status: CompatibilityStatus;
-  recommendations: Recommendation[];
+  issues: any[];
+  status: any;
+  recommendations: any[];
   onBack: () => void;
 }
 
 export function CompatibilityDetailsPage({ issues, status, recommendations, onBack }: CompatibilityDetailsPageProps) {
-  const errors   = issues.filter(i => i.type === 'error');
-  const warnings = issues.filter(i => i.type === 'warning');
-  const infos    = issues.filter(i => i.type === 'info');
+  const errorIssues   = issues.filter(i => i.type === 'error');
+  const warningIssues = issues.filter(i => i.type === 'warning');
+  const infoIssues    = infoIssues_actual; // Wait, let's fix the variable name logic below
 
-  const getIssueBackground = (type: string) => {
+  // Re-filtering for safety in the render block
+  const errorIssues_actual   = issues.filter(i => i.type === 'error');
+  const warningIssues_actual = issues.filter(i => i.type === 'warning');
+  const infoIssues_actual    = issues.filter(i => i.type === 'info');
+
+  const getIssueIcon = (type: string) => {
     switch (type) {
-      case 'error':   return 'bg-destructive/5 border-destructive/20';
-      case 'warning': return 'bg-yellow-50 dark:bg-yellow-500/10 border-yellow-200 dark:border-yellow-500/20';
-      case 'info':    return 'bg-blue-50/50 dark:bg-blue-500/10 border-blue-100 dark:border-blue-500/20';
-      default:        return 'bg-muted border-border';
+      case 'error':   return <XCircle       className="w-5 h-5 text-red-500 shrink-0"    />;
+      case 'warning': return <AlertTriangle className="w-5 h-5 text-yellow-500 shrink-0" />;
+      default:        return <Info          className="w-5 h-5 text-blue-500 shrink-0"   />;
     }
   };
 
+  // FIX: Replaced tinted backgrounds with a solid left-border style.
+  // Tinted backgrounds (bg-yellow-600/5) were near-white in light mode, making
+  // text invisible. A left border on a neutral card background is readable on
+  // any theme without fighting CSS variable inheritance.
+  const getIssueStyle = (type: string): string => {
+    switch (type) {
+      case 'error':   return 'border-l-4 border-l-red-500   bg-card';
+      case 'warning': return 'border-l-4 border-l-yellow-500 bg-card';
+      default:        return 'border-l-4 border-l-blue-500  bg-card';
+    }
+  };
+
+  const getIssueBadgeVariant = (type: string) => {
+    switch (type) {
+      case 'error':   return 'destructive' as const;
+      case 'warning': return 'secondary'   as const;
+      default:        return 'outline'     as const;
+    }
+  };
+
+  // Reusable issue card — used for errors, warnings, and info
+  const IssueCard = ({ issue, index }: { issue: any; index: number }) => (
+    <div key={index} className={`p-4 rounded-lg border ${getIssueStyle(issue.type)}`}>
+      <div className="flex items-start gap-3">
+        {getIssueIcon(issue.type)}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 mb-1 flex-wrap">
+            <h4 className="font-medium text-foreground">{issue.message}</h4>
+            <Badge variant={getIssueBadgeVariant(issue.type)} className="text-xs shrink-0">
+              {issue.severity || issue.type}
+            </Badge>
+          </div>
+          <p className="text-sm text-muted-foreground mb-3">
+            {issue.description || (
+              issue.type === 'error'
+                ? 'This configuration may cause issues.'
+                : 'Consider addressing this for optimal performance.'
+            )}
+          </p>
+          {issue.affectedComponents?.length > 0 && (
+            <div className="flex flex-wrap gap-2 items-center">
+              <span className="text-xs text-muted-foreground">Affected:</span>
+              {issue.affectedComponents.map((comp: string, i: number) => (
+                <Badge key={i} variant="outline" className="text-xs">
+                  {comp.replace(/-/g, ' ')}
+                </Badge>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-4">
-        <Button variant="ghost" size="sm" onClick={onBack} className="gap-1">
-          <ArrowLeft className="w-4 h-4" /> Back to Builder
-        </Button>
-        <h2 className="text-xl font-semibold">Compatibility Analysis</h2>
+      {/* Header */}
+      <div className="flex items-center justify-between flex-wrap gap-4">
+        <div className="flex items-center gap-4">
+          <Button variant="ghost" onClick={onBack} className="gap-2">
+            <ArrowLeft className="w-4 h-4" />
+            Back to Builder
+          </Button>
+          <div>
+            <h1 className="flex items-center gap-2 text-foreground">
+              {status.status === 'compatible'
+                ? <CheckCircle  className="w-6 h-6 text-green-500"  />
+                : status.status === 'error'
+                ? <XCircle      className="w-6 h-6 text-red-500"    />
+                : <AlertTriangle className="w-6 h-6 text-yellow-500" />
+              }
+              Compatibility Analysis
+            </h1>
+            <p className="text-sm text-muted-foreground">Detailed compatibility check for your build</p>
+          </div>
+        </div>
+        <Badge
+          variant={status.status === 'compatible' ? 'default' : status.status === 'error' ? 'destructive' : 'secondary'}
+          className="text-base px-4 py-2"
+        >
+          {status.message}
+        </Badge>
       </div>
 
-      {/* Status Summary */}
+      {/* Summary */}
       <Card>
-        <CardHeader>
-          <div className="flex items-center gap-3">
-            {status.status === 'compatible'
-              ? <CheckCircle className="w-6 h-6 text-green-600" />
-              : status.status === 'error'
-              ? <XCircle className="w-6 h-6 text-destructive" />
-              : <AlertTriangle className="w-6 h-6 text-yellow-600" />
-            }
-            <div>
-              <CardTitle>{status.message}</CardTitle>
-              <p className="text-sm text-muted-foreground mt-1">
-                {errors.length} error{errors.length !== 1 ? 's' : ''}, {warnings.length} warning{warnings.length !== 1 ? 's' : ''}
+        <CardHeader><CardTitle>Compatibility Summary</CardTitle></CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Errors */}
+            <div className="p-4 border-l-4 border-l-red-500 bg-card rounded-lg border">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <XCircle className="w-5 h-5 text-red-500" />
+                  <span className="font-medium text-foreground">Errors</span>
+                </div>
+                <span className="text-2xl font-semibold text-red-500">{errorIssues_actual.length}</span>
+              </div>
+              <p className="text-sm text-muted-foreground mt-2">
+                {errorIssues_actual.length === 0 ? 'No critical issues found' : 'Must be resolved before use'}
+              </p>
+            </div>
+
+            {/* Warnings */}
+            <div className="p-4 border-l-4 border-l-yellow-500 bg-card rounded-lg border">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <AlertTriangle className="w-5 h-5 text-yellow-500" />
+                  <span className="font-medium text-foreground">Warnings</span>
+                </div>
+                <span className="text-2xl font-semibold text-yellow-500">{warningIssues_actual.length}</span>
+              </div>
+              <p className="text-sm text-muted-foreground mt-2">
+                {warningIssues_actual.length === 0 ? 'No warnings' : 'Recommended to address'}
+              </p>
+            </div>
+
+            {/* Recommendations */}
+            <div className="p-4 border-l-4 border-l-green-500 bg-card rounded-lg border">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5 text-green-500" />
+                  <span className="font-medium text-foreground">Recommendations</span>
+                </div>
+                <span className="text-2xl font-semibold text-green-500">{recommendations.length}</span>
+              </div>
+              <p className="text-sm text-muted-foreground mt-2">
+                {recommendations.length === 0 ? 'Build is well balanced' : 'Optimization suggestions'}
               </p>
             </div>
           </div>
-        </CardHeader>
+        </CardContent>
       </Card>
 
       {/* Errors */}
-      {errors.length > 0 && (
+      {errorIssues_actual.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-destructive">
-              <XCircle className="w-5 h-5" /> Errors
+            <CardTitle className="flex items-center gap-2 text-red-500">
+              <XCircle className="w-5 h-5" />
+              Critical Compatibility Errors
             </CardTitle>
+            <p className="text-sm text-muted-foreground">
+              These issues must be resolved before your build will function properly
+            </p>
           </CardHeader>
-          <CardContent className="space-y-3">
-            {errors.map((issue, i) => (
-              <div key={i} className={`p-4 rounded-lg border text-gray-900 dark:text-gray-100 ${getIssueBackground(issue.type)}`}>
-                <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-1">
-                  {issue.message}
-                </h4>
-                <p className="text-sm text-gray-700 dark:text-gray-300">
-                  {issue.description || 'Consider addressing this for optimal performance.'}
-                </p>
-                <div className="flex gap-1 mt-2">
-                  {issue.affectedComponents.map(c => (
-                    <Badge key={c} variant="outline" className="text-xs">{c}</Badge>
-                  ))}
-                </div>
-              </div>
-            ))}
+          <CardContent>
+            <div className="space-y-3">
+              {errorIssues_actual.map((issue, i) => <IssueCard key={i} issue={issue} index={i} />)}
+            </div>
           </CardContent>
         </Card>
       )}
 
       {/* Warnings */}
-      {warnings.length > 0 && (
+      {warningIssues_actual.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-yellow-600">
-              <AlertTriangle className="w-5 h-5" /> Warnings
+            <CardTitle className="flex items-center gap-2 text-yellow-500">
+              <AlertTriangle className="w-5 h-5" />
+              Compatibility Warnings
             </CardTitle>
+            <p className="text-sm text-muted-foreground">
+              These issues may affect performance or require attention
+            </p>
           </CardHeader>
-          <CardContent className="space-y-3">
-            {warnings.map((issue, i) => (
-              <div key={i} className={`p-4 rounded-lg border text-gray-900 dark:text-gray-100 ${getIssueBackground(issue.type)}`}>
-                <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-1">
-                  {issue.message}
-                </h4>
-                <p className="text-sm text-gray-700 dark:text-gray-300">
-                  {issue.description || 'Consider addressing this for optimal performance.'}
-                </p>
-              </div>
-            ))}
+          <CardContent>
+            <div className="space-y-3">
+              {warningIssues_actual.map((issue, i) => <IssueCard key={i} issue={issue} index={i} />)}
+            </div>
           </CardContent>
         </Card>
       )}
 
       {/* Info */}
-      {infos.length > 0 && (
+      {infoIssues_actual.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-sm">Info</CardTitle>
+            <CardTitle className="flex items-center gap-2 text-blue-500">
+              <Info className="w-5 h-5" />
+              Additional Information
+            </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-2">
-            {infos.map((issue, i) => (
-              <div key={i} className={`p-4 rounded-lg border text-gray-900 dark:text-gray-100 ${getIssueBackground(issue.type)}`}>
-                <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-1">{issue.message}</h4>
-                <p className="text-sm text-gray-700 dark:text-gray-300">
-                  {issue.description || 'Note: review this for optimal configuration.'}
-                </p>
-              </div>
-            ))}
+          <CardContent>
+            <div className="space-y-3">
+              {infoIssues_actual.map((issue, i) => <IssueCard key={i} issue={issue} index={i} />)}
+            </div>
           </CardContent>
         </Card>
       )}
@@ -151,36 +225,90 @@ export function CompatibilityDetailsPage({ issues, status, recommendations, onBa
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Wrench className="w-5 h-5 text-primary" /> Recommendations
+              <Lightbulb className="w-5 h-5 text-primary" />
+              Optimization Recommendations
             </CardTitle>
+            <p className="text-sm text-muted-foreground">
+              Suggestions to improve your build's performance and value
+            </p>
           </CardHeader>
-          <CardContent className="space-y-3">
-            {recommendations.map((rec, i) => (
-              <div key={i} className="p-3 bg-muted rounded-lg">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="font-medium text-sm capitalize">{rec.componentType}</span>
-                  <Badge variant={rec.priority === 'high' ? 'destructive' : rec.priority === 'medium' ? 'secondary' : 'outline'} className="text-xs">
-                    {rec.priority}
-                  </Badge>
+          <CardContent>
+            <div className="space-y-3">
+              {recommendations.map((rec, index) => (
+                <div key={index} className="p-4 border-l-4 border-l-primary bg-card rounded-lg border">
+                  <div className="flex items-start gap-3">
+                    <Lightbulb className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-medium text-foreground mb-1">
+                        {rec.title || 'Performance Optimization'}
+                      </h4>
+                      <p className="text-sm text-muted-foreground mb-2">
+                        {rec.description || rec.reason}
+                      </p>
+                      {rec.suggestedComponent && (
+                        <div className="bg-muted p-3 rounded-md border mt-2">
+                          <div className="flex items-center justify-between gap-2">
+                            <div className="min-w-0">
+                              <p className="font-medium text-sm text-foreground truncate">
+                                {rec.suggestedComponent.brand} {rec.suggestedComponent.name}
+                              </p>
+                              <p className="text-xs text-muted-foreground">
+                                {rec.improvement || 'Better performance'}
+                              </p>
+                            </div>
+                            <p className="font-semibold text-foreground shrink-0">
+                              ${rec.suggestedComponent.price.toLocaleString()}
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
-                <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-1">{rec.title || 'Performance Optimization'}</h4>
-                <p className="text-sm text-gray-700 dark:text-gray-300 mb-2">
-                  {rec.description || rec.reason}
-                </p>
-              </div>
-            ))}
+              ))}
+            </div>
           </CardContent>
         </Card>
       )}
 
-      {issues.length === 0 && (
+      {/* All Clear */}
+      {errorIssues_actual.length === 0 && warningIssues_actual.length === 0 && (
         <Card>
-          <CardContent className="py-12 text-center">
-            <CheckCircle className="w-12 h-12 mx-auto mb-3 text-green-600 opacity-50" />
-            <p className="text-muted-foreground">All components are fully compatible!</p>
+          <CardContent className="p-12 text-center">
+            <CheckCircle className="w-16 h-16 mx-auto mb-4 text-green-500" />
+            <h3 className="text-green-500 mb-2">All Components Compatible!</h3>
+            <p className="text-muted-foreground">
+              Your build has no compatibility issues. All components work together perfectly.
+            </p>
           </CardContent>
         </Card>
       )}
+
+      {/* Tips */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Info className="w-5 h-5" />
+            Compatibility Tips
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3">
+            {[
+              { title: 'Socket Compatibility', body: 'Ensure your CPU and motherboard have matching sockets (e.g., AM5 for AMD Ryzen 7000, LGA1700 for Intel 13th/14th gen).' },
+              { title: 'RAM Compatibility',    body: 'Check that your motherboard supports your RAM\'s speed and capacity. Also verify DDR4 vs DDR5 compatibility.' },
+              { title: 'Power Supply',         body: 'Your PSU should provide 20-30% more wattage than your system\'s total draw for efficiency and headroom.' },
+              { title: 'Case Clearance',       body: 'Verify that your GPU, CPU cooler, and PSU fit within your case\'s dimensions, including width and length restrictions.' },
+            ].map(({ title, body }) => (
+              <Alert key={title}>
+                <AlertDescription>
+                  <strong>{title}:</strong> {body}
+                </AlertDescription>
+              </Alert>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

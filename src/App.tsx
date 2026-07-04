@@ -21,6 +21,8 @@ import { checkCompatibility, getCompatibilityStatus } from './utils/compatibilit
 import { generateRecommendations } from './utils/recommendationEngine';
 import { calculatePerformanceMetrics, analyzePerformanceBottlenecks } from './utils/performanceBenchmarking';
 import { calculateGamePerformance, calculateApplicationPerformance } from './utils/gameBenchmarking';
+import { AIAssistant } from './components/AIAssistant';
+import { mapBuildToComponents } from './utils/buildMapper';
 
 interface SelectedComponent {
   id: string;
@@ -277,6 +279,11 @@ function PCBuilderApp() {
       ...prev,
       [componentType]: null
     }));
+  };
+
+  const handleLoadAIBuild = (aiBuild: Record<string, string>) => {
+    const components = mapBuildToComponents(aiBuild);
+    setSelectedComponents(prev => ({ ...prev, ...components }));
   };
 
   const handleSaveBuild = () => {
@@ -735,6 +742,8 @@ function PCBuilderApp() {
           // Could add toast notification here
         }}
       />
+
+      <AIAssistant onLoadBuild={handleLoadAIBuild} />
     </div>
   );
 }

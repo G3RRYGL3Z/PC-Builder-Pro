@@ -266,17 +266,17 @@ function calculateGamingScore(
   switch (resolution) {
     case '1080p': gpuScore = gpuRating.performance1080p ?? 0; break;
     case '1440p': gpuScore = gpuRating.performance1440p ?? 0; break;
-    case '4k':    gpuScore = gpuRating.performance4k ?? 0;    break;
+    case '4k': gpuScore = gpuRating.performance4k ?? 0; break;
   }
 
-  const cpuScore    = cpuRating.gaming           ?? 0;
-  const memoryScore = memoryRating?.gaming        ?? 70; // sensible default
-  const storageScore = storageRating?.gaming      ?? 70;
+  const cpuScore = cpuRating.gaming ?? 0;
+  const memoryScore = memoryRating?.gaming ?? 70; // sensible default
+  const storageScore = storageRating?.gaming ?? 70;
 
   const score =
-    gpuScore    * weights.gpu       +
-    cpuScore    * weights.processor +
-    memoryScore * weights.memory    +
+    gpuScore * weights.gpu +
+    cpuScore * weights.processor +
+    memoryScore * weights.memory +
     storageScore * weights.storage;
 
   // FIX: isNaN guard as last resort — should never trigger with the above
@@ -295,13 +295,13 @@ function calculateProductivityScore(
 
   const weights = PERFORMANCE_WEIGHTS.productivity;
 
-  const cpuScore     = cpuRating.productivity       ?? 0;
+  const cpuScore = cpuRating.productivity ?? 0;
   // FIX: was `gpuRating?.productivity || 50` — `|| 50` treats 0 as falsy.
   // Changed to nullish coalescing so a GPU with 0 productivity still uses 0,
   // not the fallback 50, preventing inflated scores.
-  const gpuScore     = gpuRating?.productivity      ?? 50;
-  const memoryScore  = memoryRating?.productivity   ?? 70;
-  const storageScore = storageRating?.productivity  ?? 70;
+  const gpuScore = gpuRating?.productivity ?? 50;
+  const memoryScore = memoryRating?.productivity ?? 70;
+  const storageScore = storageRating?.productivity ?? 70;
 
   let taskMultiplier = 1;
   switch (task) {
@@ -320,9 +320,9 @@ function calculateProductivityScore(
   }
 
   const score = (
-    cpuScore    * weights.processor +
-    gpuScore    * weights.gpu       +
-    memoryScore * weights.memory    +
+    cpuScore * weights.processor +
+    gpuScore * weights.gpu +
+    memoryScore * weights.memory +
     storageScore * weights.storage
   ) * taskMultiplier;
 
@@ -332,9 +332,9 @@ function calculateProductivityScore(
 export function analyzePerformanceBottlenecks(selectedComponents: SelectedComponents): ComponentPerformanceContribution[] {
   const contributions: ComponentPerformanceContribution[] = [];
 
-  const cpu     = selectedComponents.processor;
-  const gpu     = selectedComponents.gpu;
-  const memory  = selectedComponents.memory;
+  const cpu = selectedComponents.processor;
+  const gpu = selectedComponents.gpu;
+  const memory = selectedComponents.memory;
   const storage = selectedComponents.storage;
 
   if (cpu) {
@@ -346,16 +346,16 @@ export function analyzePerformanceBottlenecks(selectedComponents: SelectedCompon
       const gamingScore = cpuRating.gaming ?? 0;
       const status: ComponentPerformanceContribution['status'] =
         gamingScore >= 75 ? 'optimal' :
-        gamingScore >= 60 ? 'adequate' :
-        'bottleneck';
+          gamingScore >= 60 ? 'adequate' :
+            'bottleneck';
 
       contributions.push({
         component: 'processor',
         gamingContribution: Math.round(gamingScore * PERFORMANCE_WEIGHTS.gaming.processor),
         productivityContribution: Math.round((cpuRating.productivity ?? 0) * PERFORMANCE_WEIGHTS.productivity.processor),
         bottleneck: status === 'bottleneck' ? 'May limit gaming performance' :
-                    status === 'adequate'   ? 'Moderate impact on performance' :
-                    undefined,
+          status === 'adequate' ? 'Moderate impact on performance' :
+            undefined,
         status
       });
     }
@@ -366,21 +366,21 @@ export function analyzePerformanceBottlenecks(selectedComponents: SelectedCompon
     if (gpuRating) {
       const avgGamingPerf = Math.round(
         ((gpuRating.performance1080p ?? 0) +
-         (gpuRating.performance1440p ?? 0) +
-         (gpuRating.performance4k    ?? 0)) / 3
+          (gpuRating.performance1440p ?? 0) +
+          (gpuRating.performance4k ?? 0)) / 3
       );
       const status: ComponentPerformanceContribution['status'] =
         avgGamingPerf >= 75 ? 'optimal' :
-        avgGamingPerf >= 55 ? 'adequate' :
-        'bottleneck';
+          avgGamingPerf >= 55 ? 'adequate' :
+            'bottleneck';
 
       contributions.push({
         component: 'gpu',
         gamingContribution: Math.round(avgGamingPerf * PERFORMANCE_WEIGHTS.gaming.gpu),
         productivityContribution: Math.round((gpuRating.productivity ?? 0) * PERFORMANCE_WEIGHTS.productivity.gpu),
         bottleneck: status === 'bottleneck' ? 'Primary gaming bottleneck' :
-                    status === 'adequate'   ? 'Limits performance at higher resolutions' :
-                    undefined,
+          status === 'adequate' ? 'Limits performance at higher resolutions' :
+            undefined,
         status
       });
     }
@@ -392,16 +392,16 @@ export function analyzePerformanceBottlenecks(selectedComponents: SelectedCompon
       const memScore = memoryRating.gaming ?? 0;
       const status: ComponentPerformanceContribution['status'] =
         memScore >= 75 ? 'optimal' :
-        memScore >= 55 ? 'adequate' :
-        'bottleneck';
+          memScore >= 55 ? 'adequate' :
+            'bottleneck';
 
       contributions.push({
         component: 'memory',
         gamingContribution: Math.round(memScore * PERFORMANCE_WEIGHTS.gaming.memory),
         productivityContribution: Math.round((memoryRating.productivity ?? 0) * PERFORMANCE_WEIGHTS.productivity.memory),
         bottleneck: status === 'bottleneck' ? 'Insufficient for demanding tasks' :
-                    status === 'adequate'   ? 'Consider upgrading for better multitasking' :
-                    undefined,
+          status === 'adequate' ? 'Consider upgrading for better multitasking' :
+            undefined,
         status
       });
     }
@@ -413,16 +413,16 @@ export function analyzePerformanceBottlenecks(selectedComponents: SelectedCompon
       const storScore = storageRating.gaming ?? 0;
       const status: ComponentPerformanceContribution['status'] =
         storScore >= 75 ? 'optimal' :
-        storScore >= 45 ? 'adequate' :
-        'bottleneck';
+          storScore >= 45 ? 'adequate' :
+            'bottleneck';
 
       contributions.push({
         component: 'storage',
         gamingContribution: Math.round(storScore * PERFORMANCE_WEIGHTS.gaming.storage),
         productivityContribution: Math.round((storageRating.productivity ?? 0) * PERFORMANCE_WEIGHTS.productivity.storage),
         bottleneck: status === 'bottleneck' ? 'Slow load times will impact experience' :
-                    status === 'adequate'   ? 'Adequate but SSD upgrade recommended' :
-                    undefined,
+          status === 'adequate' ? 'Adequate but SSD upgrade recommended' :
+            undefined,
         status
       });
     }
@@ -448,9 +448,9 @@ export function comparePerformance(
     currentPerformance: current,
     newPerformance: updated,
     improvement: {
-      gaming:      updated.gaming.averageFps    - current.gaming.averageFps,
+      gaming: updated.gaming.averageFps - current.gaming.averageFps,
       productivity: updated.productivity.overall - current.productivity.overall,
-      overall:     updated.overall              - current.overall
+      overall: updated.overall - current.overall
     }
   };
 }
@@ -463,9 +463,9 @@ export function getPerformanceRating(score: number): {
   // FIX: Added explicit 0 case so an empty build doesn't get rated "Poor"
   if (score <= 0) return { rating: 'N/A', color: 'text-muted-foreground', description: 'Add components to see performance' };
   if (score >= 90) return { rating: 'Excellent', color: 'text-green-600', description: 'Top-tier performance for all tasks' };
-  if (score >= 80) return { rating: 'Very Good', color: 'text-blue-600',  description: 'Great performance for most tasks' };
-  if (score >= 70) return { rating: 'Good',      color: 'text-yellow-600', description: 'Solid performance for typical use' };
-  if (score >= 60) return { rating: 'Fair',      color: 'text-orange-600', description: 'Adequate for basic tasks' };
+  if (score >= 80) return { rating: 'Very Good', color: 'text-blue-600', description: 'Great performance for most tasks' };
+  if (score >= 70) return { rating: 'Good', color: 'text-yellow-600', description: 'Solid performance for typical use' };
+  if (score >= 60) return { rating: 'Fair', color: 'text-orange-600', description: 'Adequate for basic tasks' };
   return { rating: 'Poor', color: 'text-red-600', description: 'May struggle with demanding tasks' };
 }
 
@@ -477,13 +477,13 @@ export function estimateFrameRates(performanceScore: number, resolution: string)
 } {
   const baseFrameRates = {
     100: { low: 200, medium: 180, high: 160, ultra: 140 },
-    90:  { low: 180, medium: 160, high: 140, ultra: 120 },
-    80:  { low: 160, medium: 140, high: 120, ultra: 100 },
-    70:  { low: 140, medium: 120, high: 100, ultra: 80  },
-    60:  { low: 120, medium: 100, high: 80,  ultra: 60  },
-    50:  { low: 100, medium: 80,  high: 60,  ultra: 45  },
-    40:  { low: 80,  medium: 60,  high: 45,  ultra: 30  },
-    30:  { low: 60,  medium: 45,  high: 30,  ultra: 20  }
+    90: { low: 180, medium: 160, high: 140, ultra: 120 },
+    80: { low: 160, medium: 140, high: 120, ultra: 100 },
+    70: { low: 140, medium: 120, high: 100, ultra: 80 },
+    60: { low: 120, medium: 100, high: 80, ultra: 60 },
+    50: { low: 100, medium: 80, high: 60, ultra: 45 },
+    40: { low: 80, medium: 60, high: 45, ultra: 30 },
+    30: { low: 60, medium: 45, high: 30, ultra: 20 }
   };
 
   const scores = Object.keys(baseFrameRates).map(Number).sort((a, b) => b - a);
@@ -493,15 +493,15 @@ export function estimateFrameRates(performanceScore: number, resolution: string)
   const resolutionMultipliers: Record<string, number> = {
     '1080p': 1.0,
     '1440p': 0.65,
-    '4k':    0.35
+    '4k': 0.35
   };
 
   const multiplier = resolutionMultipliers[resolution] ?? 1.0;
 
   return {
-    low:    Math.round(frameRates.low    * multiplier),
+    low: Math.round(frameRates.low * multiplier),
     medium: Math.round(frameRates.medium * multiplier),
-    high:   Math.round(frameRates.high   * multiplier),
-    ultra:  Math.round(frameRates.ultra  * multiplier)
+    high: Math.round(frameRates.high * multiplier),
+    ultra: Math.round(frameRates.ultra * multiplier)
   };
 }

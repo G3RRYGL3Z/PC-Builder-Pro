@@ -7,4 +7,4 @@ export const publicAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzd
 export const supabaseUrl = `https://${projectId}.supabase.co`
 
 // Check if Supabase is properly configured
-export const isSupabaseConfigured = !!(projectId && publicAnonKey && projectId !== 'your-project-id')
+export const isSupabaseConfigured = false

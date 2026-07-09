@@ -90,121 +90,9 @@ const components = [
 type ViewType = 'builder' | 'leaderboard' | 'performance-details' | 'game-benchmarks' | 'app-benchmarks' | 'compatibility-details';
 
 function PCBuilderApp() {
+  console.log('PCBuilderApp rendering'); // ADD THIS LINE
   const { user, signOut, isSupabaseAvailable } = useAuth();
-  const [selectedComponents, setSelectedComponents] = useState<SelectedComponents>({
-    // Pre-populate with some default components to make the app more interactive
-    processor: {
-      id: 'cpu-2',
-      name: 'Ryzen 9 7900X',
-      brand: 'AMD',
-      price: 429,
-      specifications: {
-        'Cores': '12',
-        'Threads': '24',
-        'Base Clock': '4.7 GHz',
-        'Boost Clock': '5.6 GHz',
-        'Socket': 'AM5',
-        'TDP': '170W'
-      }
-    },
-    'cpu-cooler': {
-      id: 'cooler-2',
-      name: 'Kraken X63',
-      brand: 'NZXT',
-      price: 149,
-      specifications: {
-        'Type': 'AIO Liquid',
-        'Radiator Size': '280mm',
-        'Fans': '2x 140mm',
-        'Socket Support': 'LGA1700, AM5, AM4',
-        'Pump Speed': '2800 RPM'
-      }
-    },
-    motherboard: {
-      id: 'mb-2',
-      name: 'X670E Aorus Master',
-      brand: 'Gigabyte',
-      price: 499,
-      specifications: {
-        'Socket': 'AM5',
-        'Chipset': 'X670E',
-        'Form Factor': 'ATX',
-        'Memory': 'DDR5-6400+ (OC)',
-        'PCIe Slots': '4x PCIe 5.0',
-        'WiFi': 'WiFi 6E'
-      }
-    },
-    gpu: {
-      id: 'gpu-3',
-      name: 'Radeon RX 7800 XT',
-      brand: 'AMD',
-      price: 499,
-      specifications: {
-        'Memory': '16GB GDDR6',
-        'Game Clock': '2124 MHz',
-        'Boost Clock': '2430 MHz',
-        'Stream Processors': '3840',
-        'Memory Bus': '256-bit',
-        'TDP': '263W'
-      }
-    },
-    memory: {
-      id: 'ram-1',
-      name: 'Trident Z5 RGB 32GB',
-      brand: 'G.Skill',
-      price: 179,
-      specifications: {
-        'Capacity': '32GB (2x16GB)',
-        'Type': 'DDR5',
-        'Speed': '6000 MHz',
-        'Timings': 'CL30-38-38-96',
-        'Voltage': '1.35V',
-        'RGB': 'Yes'
-      }
-    },
-    storage: {
-      id: 'ssd-1',
-      name: '980 PRO 2TB',
-      brand: 'Samsung',
-      price: 199,
-      specifications: {
-        'Capacity': '2TB',
-        'Type': 'NVMe M.2',
-        'Interface': 'PCIe 4.0',
-        'Read Speed': '7000 MB/s',
-        'Write Speed': '6900 MB/s',
-        'Form Factor': '2280'
-      }
-    },
-    'power-supply': {
-      id: 'psu-1',
-      name: 'RM1000x',
-      brand: 'Corsair',
-      price: 199,
-      specifications: {
-        'Wattage': '1000W',
-        'Efficiency': '80+ Gold',
-        'Modular': 'Fully Modular',
-        'Form Factor': 'ATX',
-        'Fan Size': '135mm',
-        'Warranty': '10 Years'
-      }
-    },
-    case: {
-      id: 'case-1',
-      name: 'H7 Flow',
-      brand: 'NZXT',
-      price: 149,
-      specifications: {
-        'Form Factor': 'Mid-Tower ATX',
-        'Dimensions': '435 x 230 x 494mm',
-        'Clearances': 'GPU: 381mm, CPU: 185mm',
-        'Drive Bays': '2x 3.5", 4x 2.5"',
-        'Front I/O': '1x USB-C, 2x USB-A',
-        'Fans Included': '3x 120mm'
-      }
-    }
-  });
+  const [selectedComponents, setSelectedComponents] = useState<SelectedComponents>({});
   const [dialogOpen, setDialogOpen] = useState(false);
   const [currentComponentType, setCurrentComponentType] = useState<string>('');
   const [authDialogOpen, setAuthDialogOpen] = useState(false);
@@ -220,7 +108,7 @@ function PCBuilderApp() {
     const contributions = analyzePerformanceBottlenecks(selectedComponents);
     const gamePerformances = calculateGamePerformance(selectedComponents);
     const applicationPerformances = calculateApplicationPerformance(selectedComponents);
-    
+
     // Transform game performances for detail page
     const transformedGamePerformances = gamePerformances.map(game => ({
       ...game,
@@ -241,14 +129,14 @@ function PCBuilderApp() {
       })),
       notes: app.tasks[0]?.description || ''
     }));
-    
-    return { 
-      issues, 
-      status, 
-      recommendations, 
-      performance, 
-      contributions, 
-      gamePerformances, 
+
+    return {
+      issues,
+      status,
+      recommendations,
+      performance,
+      contributions,
+      gamePerformances,
       applicationPerformances,
       transformedGamePerformances,
       transformedAppPerformances
@@ -314,10 +202,10 @@ function PCBuilderApp() {
 
   // Get compatibility indicator for a specific component
   const getComponentCompatibilityIndicator = (componentId: string) => {
-    const affectedIssues = analysisData.issues.filter(issue => 
+    const affectedIssues = analysisData.issues.filter(issue =>
       issue.affectedComponents.includes(componentId)
     );
-    
+
     if (affectedIssues.some(issue => issue.type === 'error')) {
       return <XCircle className="w-4 h-4 text-destructive" />;
     } else if (affectedIssues.some(issue => issue.type === 'warning')) {
@@ -365,7 +253,7 @@ function PCBuilderApp() {
                 </Badge>
               )}
             </div>
-            
+
             <div className="flex items-center space-x-2">
               <Button
                 variant="outline"
@@ -376,7 +264,7 @@ function PCBuilderApp() {
                 <Save className="w-4 h-4" />
                 Save Build
               </Button>
-              
+
               {user ? (
                 <div className="flex items-center space-x-2">
                   <div className="flex items-center gap-2 px-3 py-1 bg-muted rounded-md">
@@ -401,7 +289,7 @@ function PCBuilderApp() {
                   Sign In
                 </Button>
               )}
-              
+
               <Button variant="ghost" size="icon">
                 <Menu className="w-6 h-6" />
               </Button>
@@ -448,11 +336,10 @@ function PCBuilderApp() {
             {/* Compatibility Status Banner */}
             {selectedCount >= 2 && analysisData.status.status !== 'compatible' && (
               <div className="mb-6">
-                <div className={`p-4 rounded-lg border ${
-                  analysisData.status.status === 'error' 
-                    ? 'bg-destructive/10 border-destructive/20' 
+                <div className={`p-4 rounded-lg border ${analysisData.status.status === 'error'
+                    ? 'bg-destructive/10 border-destructive/20'
                     : 'bg-yellow-50 border-yellow-200'
-                }`}>
+                  }`}>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       {analysisData.status.status === 'error' ? (
@@ -460,9 +347,8 @@ function PCBuilderApp() {
                       ) : (
                         <AlertTriangle className="w-5 h-5 text-yellow-600" />
                       )}
-                      <p className={`font-medium ${
-                        analysisData.status.status === 'error' ? 'text-destructive' : 'text-yellow-800'
-                      }`}>
+                      <p className={`font-medium ${analysisData.status.status === 'error' ? 'text-destructive' : 'text-yellow-800'
+                        }`}>
                         {analysisData.status.message}
                       </p>
                     </div>
@@ -488,27 +374,24 @@ function PCBuilderApp() {
                 const hasRecommendationsForComponent = analysisData.recommendations.some(
                   rec => rec.componentType === component.id
                 );
-                
+
                 return (
-                  <Card 
+                  <Card
                     key={component.id}
-                    className={`cursor-pointer transition-all duration-200 hover:shadow-lg hover:scale-[1.02] group ${
-                      isSelected ? 'ring-2 ring-primary border-primary' : ''
-                    } ${hasRecommendationsForComponent ? 'ring-1 ring-blue-300 border-blue-200' : ''}`}
+                    className={`cursor-pointer transition-all duration-200 hover:shadow-lg hover:scale-[1.02] group ${isSelected ? 'ring-2 ring-primary border-primary' : ''
+                      } ${hasRecommendationsForComponent ? 'ring-1 ring-blue-300 border-blue-200' : ''}`}
                     onClick={() => handleOpenDialog(component.id)}
                   >
                     <CardContent className="p-4 text-center">
                       <div className="mb-3 flex justify-center relative">
-                        <div className={`p-3 rounded-lg transition-colors ${
-                          isSelected 
-                            ? 'bg-primary text-primary-foreground' 
+                        <div className={`p-3 rounded-lg transition-colors ${isSelected
+                            ? 'bg-primary text-primary-foreground'
                             : 'bg-muted group-hover:bg-accent'
-                        }`}>
-                          <IconComponent className={`w-8 h-8 ${
-                            isSelected 
-                              ? 'text-primary-foreground' 
+                          }`}>
+                          <IconComponent className={`w-8 h-8 ${isSelected
+                              ? 'text-primary-foreground'
                               : 'text-muted-foreground group-hover:text-accent-foreground'
-                          }`} />
+                            }`} />
                         </div>
                         {compatibilityIndicator && (
                           <div className="absolute -top-1 -right-1 bg-card rounded-full p-1">
@@ -521,31 +404,31 @@ function PCBuilderApp() {
                           </div>
                         )}
                       </div>
-                      
+
                       <h3 className="mb-2 text-sm font-medium">{component.name}</h3>
-                      
+
                       {isSelected ? (
                         <div className="space-y-2">
                           <div className="flex justify-center gap-1 flex-wrap">
                             <Badge variant="default" className="text-xs px-2 py-1">Selected</Badge>
                             {compatibilityIndicator && (
-                              <Badge 
+                              <Badge
                                 variant={
-                                  analysisData.issues.some(issue => 
+                                  analysisData.issues.some(issue =>
                                     issue.affectedComponents.includes(component.id) && issue.type === 'error'
-                                  ) ? 'destructive' : 
-                                  analysisData.issues.some(issue => 
-                                    issue.affectedComponents.includes(component.id) && issue.type === 'warning'
-                                  ) ? 'secondary' : 'default'
+                                  ) ? 'destructive' :
+                                    analysisData.issues.some(issue =>
+                                      issue.affectedComponents.includes(component.id) && issue.type === 'warning'
+                                    ) ? 'secondary' : 'default'
                                 }
                                 className="text-xs px-2 py-1"
                               >
-                                {analysisData.issues.some(issue => 
+                                {analysisData.issues.some(issue =>
                                   issue.affectedComponents.includes(component.id) && issue.type === 'error'
-                                ) ? 'Issue' : 
-                                analysisData.issues.some(issue => 
-                                  issue.affectedComponents.includes(component.id) && issue.type === 'warning'
-                                ) ? 'Warning' : 'Compatible'}
+                                ) ? 'Issue' :
+                                  analysisData.issues.some(issue =>
+                                    issue.affectedComponents.includes(component.id) && issue.type === 'warning'
+                                  ) ? 'Warning' : 'Compatible'}
                               </Badge>
                             )}
                             {hasRecommendationsForComponent && (
@@ -562,9 +445,9 @@ function PCBuilderApp() {
                           <p className="text-xs text-muted-foreground mb-3">
                             {component.description}
                           </p>
-                          <Button 
+                          <Button
                             variant={hasRecommendationsForComponent ? "default" : "outline"}
-                            size="sm" 
+                            size="sm"
                             className="w-full text-xs group-hover:bg-primary group-hover:text-primary-foreground"
                           >
                             {hasRecommendationsForComponent ? 'View Recommended' : 'Select Component'}
@@ -665,17 +548,16 @@ function PCBuilderApp() {
                 {Object.entries(selectedComponents).map(([type, component]) => {
                   if (!component) return null;
                   const componentInfo = components.find(c => c.id === type);
-                  const hasIssues = analysisData.issues.some(issue => 
+                  const hasIssues = analysisData.issues.some(issue =>
                     issue.affectedComponents.includes(type)
                   );
                   const hasRecommendationsForComponent = analysisData.recommendations.some(
                     rec => rec.componentType === type
                   );
-                  
+
                   return (
-                    <div key={type} className={`flex items-center justify-between p-3 rounded-lg ${
-                      hasIssues ? 'bg-destructive/5 border border-destructive/20' : 'bg-muted'
-                    }`}>
+                    <div key={type} className={`flex items-center justify-between p-3 rounded-lg ${hasIssues ? 'bg-destructive/5 border border-destructive/20' : 'bg-muted'
+                      }`}>
                       <div className="flex items-center space-x-3">
                         <div className="w-8 h-8 bg-primary rounded-md flex items-center justify-center">
                           {componentInfo && <componentInfo.icon className="w-4 h-4 text-primary-foreground" />}
@@ -697,8 +579,8 @@ function PCBuilderApp() {
                       </div>
                       <div className="flex items-center space-x-2">
                         <span className="font-semibold">${component.price.toLocaleString()}</span>
-                        <Button 
-                          variant="ghost" 
+                        <Button
+                          variant="ghost"
                           size="sm"
                           onClick={() => handleRemoveComponent(type)}
                         >
@@ -743,6 +625,7 @@ function PCBuilderApp() {
         }}
       />
 
+      {console.log('About to render AIAssistant')}
       <AIAssistant onLoadBuild={handleLoadAIBuild} />
     </div>
   );

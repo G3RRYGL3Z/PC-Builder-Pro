@@ -2,10 +2,11 @@
   import { defineConfig } from 'vite';
   import react from '@vitejs/plugin-react-swc';
   import path from 'path';
+  import tailwindcss from '@tailwindcss/vite';
 
   export default defineConfig({
     root: './src',
-    plugins: [react()],
+    plugins: [react(), tailwindcss()],
     resolve: {
       extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
       alias: {

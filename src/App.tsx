@@ -125,7 +125,8 @@ function PCBuilderApp() {
       tasks: app.tasks.map(task => ({
         name: task.taskName,
         performance: task.value,
-        description: task.description
+        description: task.description,
+        rating: task.rating
       })),
       notes: app.tasks[0]?.description || ''
     }));

@@ -129,11 +129,11 @@ export function ApplicationBenchmarksPage({ applicationPerformances, onBack }: A
           <CardContent>
             <div className={`text-3xl font-semibold ${getPerformanceColor(
               applicationPerformances.filter(app => app.category === 'Video Editing' || app.category === 'video')
-                .reduce((sum, app) => sum + app.score, 0) / 
+                .reduce((sum, app) => sum + app.score, 0) /
               (applicationPerformances.filter(app => app.category === 'Video Editing' || app.category === 'video').length || 1)
             )}`}>
               {Math.round(applicationPerformances.filter(app => app.category === 'Video Editing' || app.category === 'video')
-                .reduce((sum, app) => sum + app.score, 0) / 
+                .reduce((sum, app) => sum + app.score, 0) /
                 (applicationPerformances.filter(app => app.category === 'Video Editing' || app.category === 'video').length || 1))}/100
             </div>
             <p className="text-sm text-muted-foreground mt-1">
@@ -149,11 +149,11 @@ export function ApplicationBenchmarksPage({ applicationPerformances, onBack }: A
           <CardContent>
             <div className={`text-3xl font-semibold ${getPerformanceColor(
               applicationPerformances.filter(app => app.category === '3D Rendering' || app.category === 'rendering')
-                .reduce((sum, app) => sum + app.score, 0) / 
+                .reduce((sum, app) => sum + app.score, 0) /
               (applicationPerformances.filter(app => app.category === '3D Rendering' || app.category === 'rendering').length || 1)
             )}`}>
               {Math.round(applicationPerformances.filter(app => app.category === '3D Rendering' || app.category === 'rendering')
-                .reduce((sum, app) => sum + app.score, 0) / 
+                .reduce((sum, app) => sum + app.score, 0) /
                 (applicationPerformances.filter(app => app.category === '3D Rendering' || app.category === 'rendering').length || 1))}/100
             </div>
             <p className="text-sm text-muted-foreground mt-1">
@@ -169,11 +169,11 @@ export function ApplicationBenchmarksPage({ applicationPerformances, onBack }: A
           <CardContent>
             <div className={`text-3xl font-semibold ${getPerformanceColor(
               applicationPerformances.filter(app => app.category === 'Development' || app.category === 'development')
-                .reduce((sum, app) => sum + app.score, 0) / 
+                .reduce((sum, app) => sum + app.score, 0) /
               (applicationPerformances.filter(app => app.category === 'Development' || app.category === 'development').length || 1)
             )}`}>
               {Math.round(applicationPerformances.filter(app => app.category === 'Development' || app.category === 'development')
-                .reduce((sum, app) => sum + app.score, 0) / 
+                .reduce((sum, app) => sum + app.score, 0) /
                 (applicationPerformances.filter(app => app.category === 'Development' || app.category === 'development').length || 1))}/100
             </div>
             <p className="text-sm text-muted-foreground mt-1">
@@ -259,8 +259,8 @@ export function ApplicationBenchmarksPage({ applicationPerformances, onBack }: A
                         </Badge>
                       </div>
                       <p className="text-xs text-muted-foreground mt-0.5">
-                        {checkedCount === totalTasks 
-                          ? 'All capability items checked' 
+                        {checkedCount === totalTasks
+                          ? 'All capability items checked'
                           : `${checkedCount}/${totalTasks} capability items met`}
                       </p>
                     </div>
@@ -285,11 +285,10 @@ export function ApplicationBenchmarksPage({ applicationPerformances, onBack }: A
                       return (
                         <div
                           key={index}
-                          className={`p-3.5 rounded-lg border flex flex-col justify-between transition-colors ${
-                            passed
-                              ? 'bg-emerald-500/5 border-emerald-500/25'
-                              : 'bg-destructive/5 border-destructive/20'
-                          }`}
+                          className={`p-3.5 rounded-lg border flex flex-col justify-between transition-colors ${passed
+                            ? 'bg-emerald-500/5 border-emerald-500/25'
+                            : 'bg-destructive/5 border-destructive/20'
+                            }`}
                         >
                           <div>
                             <div className="flex items-start justify-between gap-2">
@@ -312,9 +311,8 @@ export function ApplicationBenchmarksPage({ applicationPerformances, onBack }: A
                           <div className="mt-3 pt-2.5 border-t border-border/50 flex items-center justify-between text-xs">
                             <span className="text-muted-foreground font-medium">Rating Score</span>
                             <div className="flex items-center gap-1.5">
-                              <span className={`font-bold tabular-nums text-sm ${
-                                passed ? 'text-emerald-600 dark:text-emerald-400' : 'text-destructive'
-                              }`}>
+                              <span className={`font-bold tabular-nums text-sm ${passed ? 'text-emerald-600 dark:text-emerald-400' : 'text-destructive'
+                                }`}>
                                 {Math.round(task.performance)}/100
                               </span>
                               {task.rating && (
